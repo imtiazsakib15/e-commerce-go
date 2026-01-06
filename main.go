@@ -23,27 +23,60 @@ func aboutHandler(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "I am Sakib")
 }
 func getProductsHandler(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
+	handleCors(w)
 
 	if(r.Method != http.MethodGet) {
 		http.Error(w, "This is a GET request route", http.StatusBadRequest)
 		return
 	}
+	sendData(w, products, http.StatusOK)
+}
+func createProductHandler(w http.ResponseWriter, r *http.Request) {
+	handleCors(w)
+	handlePreflightRequest(w, r)
 
-	encode := json.NewEncoder(w)
-	err := encode.Encode(products)
+	if(r.Method != http.MethodPost) {
+		http.Error(w, "This is a POST request route", http.StatusBadRequest)
+		return
+	}
 
+	var newProduct Product
+	decode := json.NewDecoder(r.Body)
+	err := decode.Decode(&newProduct)
 	if(err != nil) {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		fmt.Println(err)
+		http.Error(w, "Invalid request body", http.StatusBadRequest)
+		return
+	}
+	newProduct.ID = len(products) + 1
+	products = append(products, newProduct)
+
+	sendData(w, newProduct, http.StatusCreated)
+}
+
+func handleCors(w http.ResponseWriter) {
+	w.Header().Set("Access-control-allow-origin", "*")
+	w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, PATCH, DELETE, OPTIONS")
+	w.Header().Set("Access-control-Allow-Headers", "Content-Type")
+	w.Header().Set("Content-Type", "application/json")
+}
+func handlePreflightRequest(w http.ResponseWriter, r *http.Request) {
+	if(r.Method != http.MethodPost) {
+		http.Error(w, "This is a POST request route", http.StatusBadRequest)
 		return
 	}
 }
-
+func sendData(w http.ResponseWriter, data interface{}, statusCode int) {
+	w.WriteHeader(statusCode)
+	encode := json.NewEncoder(w)
+	encode.Encode(data)
+}
 func main() {
 	mux := http.NewServeMux()
-	mux.HandleFunc("/", handler)
+	mux.HandleFunc("/home", handler)
 	mux.HandleFunc("/about", aboutHandler)
 	mux.HandleFunc("/products", getProductsHandler)
+	mux.HandleFunc("/create-product", createProductHandler)
 	fmt.Println("Server started at localhost:5000")
 	err := http.ListenAndServe(":5000", mux)
 	if err != nil {
