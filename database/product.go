@@ -7,7 +7,7 @@ type Product struct {
 	Price       float64 `json:"price"`
 }
 
-var Products []Product
+var products []Product
 
 func init() {
 	product1 :=
@@ -25,6 +25,25 @@ func init() {
 			Price:       12,
 		}
 
-	Products = append(
-		Products, product1, product2)
+	products = append(
+		products, product1, product2)
+}
+
+func Store(product Product) Product {
+	product.ID = len(products) + 1
+	products = append(products, product)
+	return product
+}
+
+func List() []Product {
+	return products
+}
+
+func Get(productId int) *Product {
+	for _, product := range products {
+		if product.ID == productId {
+			return &product
+		}
+	}
+	return nil
 }

@@ -17,8 +17,8 @@ func CreateProduct(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Invalid request body", http.StatusBadRequest)
 		return
 	}
-	newProduct.ID = len(database.Products) + 1
-	database.Products = append(database.Products, newProduct)
+	
+	createdProduct := database.Store(newProduct)
 
-	util.SendData(w, newProduct, http.StatusCreated)
+	util.SendData(w, createdProduct, http.StatusCreated)
 }
