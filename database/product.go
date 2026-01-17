@@ -47,3 +47,14 @@ func Get(productId int) *Product {
 	}
 	return nil
 }
+
+func Update(productID int, product Product) *Product {
+	for idx, pdt := range products {
+		if pdt.ID == productID {
+			product.ID = productID
+			products[idx] = product
+			return &product
+		}
+	}
+	return nil
+}
