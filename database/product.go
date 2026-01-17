@@ -58,3 +58,13 @@ func Update(productID int, product Product) *Product {
 	}
 	return nil
 }
+
+func Delete(productID int) *Product {
+	for idx, pdt := range products {
+		if pdt.ID == productID {
+			products[idx] = Product{}
+			return &pdt
+		}
+	}
+	return nil
+}

@@ -31,4 +31,10 @@ func initRoutes(mux *http.ServeMux, manager *middleware.Manager) {
 			http.HandlerFunc(handler.UpdateProduct), 
 		),
 	)
+	mux.Handle(
+		"DELETE /products/{id}", 
+		manager.With(
+			http.HandlerFunc(handler.DeleteProduct), 
+		),
+	)
 }
