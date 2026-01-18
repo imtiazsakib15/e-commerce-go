@@ -46,4 +46,10 @@ func initRoutes(mux *http.ServeMux, manager *middleware.Manager) {
 			http.HandlerFunc(handler.CreateUser),
 		),
 	)
+	mux.Handle(
+		"POST /users/login", 
+		manager.With(
+			http.HandlerFunc(handler.Login),
+		),
+	)
 }
