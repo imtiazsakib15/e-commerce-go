@@ -7,6 +7,7 @@ import (
 )
 
 func initRoutes(mux *http.ServeMux, manager *middleware.Manager) {
+	// Product Routes
 	mux.Handle(
 		"GET /products", 
 		manager.With(
@@ -35,6 +36,14 @@ func initRoutes(mux *http.ServeMux, manager *middleware.Manager) {
 		"DELETE /products/{id}", 
 		manager.With(
 			http.HandlerFunc(handler.DeleteProduct), 
+		),
+	)
+
+	// User Routes
+	mux.Handle(
+		"POST /users", 
+		manager.With(
+			http.HandlerFunc(handler.CreateUser),
 		),
 	)
 }
