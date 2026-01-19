@@ -28,22 +28,22 @@ func CreateJwt(data Payload, secret string) (string, error) {
 	if(err != nil) {
 		return "", err
 	}
-	headerB64 := base64UrlEncoder(byteArrHeader)
+	headerB64 := Base64UrlEncoder(byteArrHeader)
 	
 	byteArrPayload, err := json.Marshal(data)
 	if(err != nil) {
 		return "", err
 	}
-	PayloadB64 := base64UrlEncoder(byteArrPayload)
+	PayloadB64 := Base64UrlEncoder(byteArrPayload)
 
 	message := headerB64 + "." + PayloadB64
 	signature := hmac.New(sha256.New, []byte(secret)).Sum([]byte(message))
-	signatureB64 := base64UrlEncoder(signature)
+	signatureB64 := Base64UrlEncoder(signature)
 	
 	token := headerB64 + "." + PayloadB64 + "." + signatureB64
 	return token, nil
 }
 
-func base64UrlEncoder(byteArr []byte) string {
+func Base64UrlEncoder(byteArr []byte) string {
 	return base64.URLEncoding.WithPadding(base64.NoPadding).EncodeToString(byteArr)
 } 
