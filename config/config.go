@@ -15,7 +15,7 @@ type Config struct {
 	JwtSecret   string
 }
 
-var config Config
+var config *Config
 
 func loadConfig() {
 	err := godotenv.Load()
@@ -41,27 +41,29 @@ func loadConfig() {
 		log.Println("HTTP Port is required!")
 		os.Exit(1)
 	}
-
-	JwtSecret := os.Getenv("JWT_SECRET")
-	if(JwtSecret == "") {
-		log.Println("Jwt secret is required!")
-		os.Exit(1)
-	}
-
 	port, err := strconv.Atoi(httpPort)
 	if(err != nil) {
 		log.Println("HTTP Port is invalid!")
 		os.Exit(1)
 	}
 
-	config = Config{
+	jwtSecret := os.Getenv("JWT_SECRET")
+	if(jwtSecret == "") {
+		log.Println("Jwt secret is required!")
+		os.Exit(1)
+	}
+
+	config = &Config{
 		Version:     version,
 		ServiceName: serviceName,
 		HTTPPort:    port,
+		JwtSecret:   jwtSecret,
 	}
 }
 
 func GetConfig() Config {
-	loadConfig()
-	return config
+	if(config == nil) {
+		loadConfig()
+	}
+	return *config
 }

@@ -1,4 +1,4 @@
-package handler
+package user
 
 import (
 	"ecommerce/config"
@@ -14,7 +14,7 @@ type LoginReq struct {
 	Password    string `json:"password"`
 }
 
-func Login(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) Login(w http.ResponseWriter, r *http.Request) {
 	var loginReq LoginReq
 	decode := json.NewDecoder(r.Body)
 	err := decode.Decode(&loginReq)
