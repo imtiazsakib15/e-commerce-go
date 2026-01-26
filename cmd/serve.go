@@ -6,6 +6,7 @@ import (
 	"ecommerce/rest"
 	"ecommerce/rest/handlers/product"
 	"ecommerce/rest/handlers/user"
+	middleware "ecommerce/rest/middlewares"
 )
 
 func Serve() {
@@ -13,9 +14,11 @@ func Serve() {
 
 	userRepo := repo.NewUserRepo()
 	productRepo := repo.NewProductRepo()
+
+	middlewares := middleware.NewMiddlewares(cnf)
 	
-	userHandler := user.NewHandler(userRepo)
-	productHandler := product.NewHandler(productRepo)
+	userHandler := user.NewHandler(cnf, userRepo)
+	productHandler := product.NewHandler(productRepo, middlewares)
 
 	server := rest.NewServer(cnf, userHandler, productHandler)
 	server.Start()

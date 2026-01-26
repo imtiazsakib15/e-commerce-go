@@ -1,7 +1,6 @@
 package user
 
 import (
-	"ecommerce/config"
 	"ecommerce/util"
 	"encoding/json"
 	"fmt"
@@ -34,13 +33,12 @@ func (h *Handler) Login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	
-	cnf := config.GetConfig()
 	accessToken, err := util.CreateJwt(util.Payload{
 		Sub: user.ID,
 		Name: user.Name,
 		Email: user.Email,
 		IsShopOwner: user.IsShopOwner,
-	}, cnf.JwtSecret)
+	}, h.cnf.JwtSecret)
 	if(err != nil) {
 		util.SendError(w, http.StatusBadRequest, "An error occurred")
 	}

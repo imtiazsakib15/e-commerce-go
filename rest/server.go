@@ -10,12 +10,12 @@ import (
 )
 
 type Server struct {
-	cnf config.Config
+	cnf *config.Config
 	userHandler *user.Handler
 	productHandler *product.Handler
 }
 
-func NewServer(cnf config.Config, userHandler *user.Handler, productHandler *product.Handler) *Server {
+func NewServer(cnf *config.Config, userHandler *user.Handler, productHandler *product.Handler) *Server {
 	return &Server{
 		cnf: cnf,
 		userHandler: userHandler,

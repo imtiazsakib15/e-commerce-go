@@ -3,13 +3,12 @@ package middleware
 import (
 	"crypto/hmac"
 	"crypto/sha256"
-	"ecommerce/config"
 	"ecommerce/util"
 	"net/http"
 	"strings"
 )
 
-func Auth(next http.Handler) http.Handler {
+func (m *Middlewares) Auth(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request){
 		headerAuth := r.Header.Get("Authorization")
 		if(headerAuth == "") {
@@ -35,8 +34,7 @@ func Auth(next http.Handler) http.Handler {
 		tokenSignature := tokenArr[2]
 
 		message := tokenHeader + "." + tokenPayload
-		cnf := config.GetConfig()
-		signature := hmac.New(sha256.New, []byte(cnf.JwtSecret)).Sum([]byte(message))
+		signature := hmac.New(sha256.New, []byte(m.cnf.JwtSecret)).Sum([]byte(message))
 		newSignature := util.Base64UrlEncoder(signature)
 
 		if(tokenSignature != newSignature) {

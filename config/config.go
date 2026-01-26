@@ -4,6 +4,7 @@ import (
 	"log"
 	"os"
 	"strconv"
+	"sync"
 
 	"github.com/lpernett/godotenv"
 )
@@ -16,6 +17,7 @@ type Config struct {
 }
 
 var config *Config
+var once sync.Once
 
 func loadConfig() {
 	err := godotenv.Load()
@@ -61,9 +63,10 @@ func loadConfig() {
 	}
 }
 
-func GetConfig() Config {
-	if(config == nil) {
-		loadConfig()
-	}
-	return *config
+func GetConfig() *Config {
+	// if(config == nil) {
+	// 	loadConfig()
+	// }
+	once.Do(loadConfig)
+	return config
 }
