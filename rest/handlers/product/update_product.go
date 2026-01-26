@@ -1,13 +1,20 @@
 package product
 
 import (
-	"ecommerce/database"
+	"ecommerce/repo"
 	"ecommerce/util"
 	"encoding/json"
 	"fmt"
 	"net/http"
 	"strconv"
 )
+
+type ReqUpdateProduct struct {
+    ID          int     `json:"id"`
+    Title       string  `json:"title"`
+    Description string  `json:"description"`
+    Price       float64 `json:"price"`
+}
 
 func (h *Handler) UpdateProduct(w http.ResponseWriter, r *http.Request) {
 
@@ -17,7 +24,7 @@ func (h *Handler) UpdateProduct(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var product database.Product
+	var product ReqUpdateProduct
 	decode := json.NewDecoder(r.Body)
 	error := decode.Decode(&product)
 	if error != nil {
@@ -26,10 +33,19 @@ func (h *Handler) UpdateProduct(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	updatedProduct := database.Update(productID, product)
-	if(updatedProduct != nil){
-		util.SendData(w, updatedProduct, http.StatusOK)
+	updatedProduct, err := h.productRepo.Update(productID, repo.Product{
+		Title: product.Title,
+		Description: product.Description,
+		Price: product.Price,
+	})
+	if err != nil {
+		fmt.Println(err)
+		util.SendError(w, http.StatusBadRequest, err)
 		return
 	}
-	http.Error(w, "Product not found", http.StatusNotFound)
+	if(updatedProduct != nil){
+		util.SendData(w, http.StatusOK, updatedProduct)
+		return
+	}
+	util.SendError(w, http.StatusBadRequest, "Product not found")
 }
